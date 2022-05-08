@@ -1,24 +1,25 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Menu from "./Components/Menu";
+import LocationListEditor from "./Components/LocationListEditor";
+import {useState} from "react";
 
 function App() {
+    const [locationList, setLocationList] = useState([]);
+
+    function updateLocationList(location){
+        setLocationList(oldList => [...oldList, location]);
+    }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<Menu/>}>
+            {/*<Route index element={<Forecast/>}/>*/}
+            <Route path="/locationListEditor" element={<LocationListEditor locationList={locationList} updateLocationList={updateLocationList}/>}/>
+            {/*<Route path="*" element={<NoPage/>}/>*/}
+          </Route>
+        </Routes>
+      </BrowserRouter>
   );
 }
 

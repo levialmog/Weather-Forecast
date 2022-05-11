@@ -11,15 +11,22 @@ function LocationList(props) {
             return <button className="deleteButton btn btn-danger" onClick={(event) => deleteLocation(name, event.target)}>Delete</button>
         }
     }
-
-    props.locationList.forEach((listItem) => {
+    for (const [key, value] of Object.entries(props.locationList)){
         listItems.push(
             <li className="list-group-item">
-                {listItem.name}
-                {deleteButton(listItem.name)}
+                {key}
+                {deleteButton(key)}
             </li>
         );
-    });
+    }
+    // props.locationList.forEach((listItem) => {
+    //     listItems.push(
+    //         <li className="list-group-item">
+    //             {props.locationList.keys(listItem)}
+    //             {deleteButton(props.locationList.keys(listItem))}
+    //         </li>
+    //     );
+    // });
 
     return (
         <div className="card">

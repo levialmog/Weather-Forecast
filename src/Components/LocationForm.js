@@ -1,12 +1,10 @@
 import {useState} from "react";
 
 function LocationForm(props) {
-    let nameError, latitudeError, longitudeError;
-
     const [inputs, setInputs] = useState({});
 
-    const isInvalid = (input, inputName) =>{
-        if(input.isValid){
+    const isInvalid = (error, inputName) =>{
+        if(!error){
             document.getElementById(inputName).classList.remove("is-invalid")
         }
         else{
@@ -25,15 +23,11 @@ function LocationForm(props) {
 
         props.validateLocation(inputs);
 
-        nameError = props.errors["name"]["errorMessage"];
-        latitudeError = props.errors["latitude"]["errorMessage"];
-        longitudeError = props.errors["longitude"]["errorMessage"];
-
         isInvalid(props.errors.name, "name");
         isInvalid(props.errors.latitude, "latitude");
         isInvalid(props.errors.longitude, "longitude");
 
-        if(props.errors.name.isValid && props.errors.latitude.isValid && props.errors.longitude.isValid){
+        if(!(props.errors.name && props.errors.latitude && props.errors.longitude)){
             props.addLocation(inputs)
         }
     }
@@ -50,10 +44,9 @@ function LocationForm(props) {
                             type="text"
                             name="name"
                             id="name"
-                            value={inputs.name || ""}
                             onChange={handleChange}
                             required/>
-                        <div className="invalid-feedback">{nameError}</div>
+                        <div className="invalid-feedback">{props.errors.name}</div>
                     </div>
 
                     <div className="mb-3">
@@ -63,10 +56,9 @@ function LocationForm(props) {
                             type="number"
                             name="latitude"
                             id="latitude"
-                            value={inputs.latitude || ""}
                             onChange={handleChange}
                             required/>
-                        <div className="invalid-feedback">{latitudeError}</div>
+                        <div className="invalid-feedback">{props.errors.latitude}</div>
                     </div>
 
                     <div className="mb-3">
@@ -76,10 +68,9 @@ function LocationForm(props) {
                             type="number"
                             name="longitude"
                             id="longitude"
-                            value={inputs.longitude || ""}
                             onChange={handleChange}
                             required/>
-                        <div className="invalid-feedback">{longitudeError}</div>
+                        <div className="invalid-feedback">{props.errors.longitude}</div>
                     </div>
 
                     <div className="text-center">

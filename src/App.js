@@ -5,54 +5,45 @@ import {useState} from "react";
 import Forecast from "./Components/Forecast";
 //{"name":"Jerusalem", "latitude":"10", "longitude":"12"}
 function App() {
-    const [locationList, setLocationList] = useState([]);
-    const [errors, setErrors] = useState({});
+    const [locationList, setLocationList] = useState({});
+    const [errors, setErrors] = useState({name:"", latitude:"", longitude:""});
 
     const validateLocation = (newLocation) => {
-        setErrors({});
-
         if(!newLocation.name) {
-            setErrors(errors => [{...errors, "name":{"isValid":false, "errorMessage":"Name is required"}}]);
+            setErrors(oldErrors=>({...oldErrors, name:"Name is required"}));
+        }
+        else if(newLocation.name in locationList){
+            setErrors(oldErrors => ({...oldErrors, name:"This location is already exist"}));
         }
         else{
-            let isNotExist = true;
-            locationList.forEach((location) => {
-                if (location.name === newLocation.name) {
-                    setErrors(errors => ({...errors, "name":{"isValid":false, "errorMessage":"This location is already exist"}}));
-                    isNotExist = false;
-                }
-            });
-
-            if(isNotExist) {
-                setErrors(errors => ({...errors, "name":{"isValid":true, "errorMessage":""}}));
-            }
+            setErrors(oldErrors => ({...oldErrors, name:""}));
         }
 
         if(!newLocation.latitude) {
-            setErrors(errors => ({...errors, "latitude":{"isValid":false, "errorMessage":"Latitude is required"}}));
+            setErrors({...errors, latitude:"Latitude is required"});
         }
-        else if(parseInt(newLocation.latitude) > 90 || parseInt(newLocation.latitude) < -90) {
-            setErrors(errors => ({...errors, "latitude":{"isValid":false,
-                                                    "errorMessage":"Latitude must be a decimal between -90.0 and 90.0"}}));
+        else if(parseFloat(newLocation.latitude) > 90 || parseFloat(newLocation.latitude) < -90) {
+            setErrors({...errors, latitude:"Latitude must be between -90.0 and 90.0"});
         }
         else {
-            setErrors(errors => ({...errors, "latitude":{"isValid":true, "errorMessage":""}}));
+            setErrors({...errors, latitude:""});
         }
 
         if(!newLocation.longitude) {
-            setErrors(errors => ({...errors, "longitude":{"isValid":false, "errorMessage":"Longitude is required"}}));
+            setErrors({...errors, longitude:"Longitude is required"});
         }
-        else if(parseInt(newLocation.longitude) > 180 || parseInt(newLocation.longitude) < -180) {
-            setErrors(errors => ({...errors, "longitude":{"isValid":false,
-                                                    "errorMessage":"Latitude must be a decimal between -180.0 and 180.0"}}));
+        else if(parseFloat(newLocation.longitude) > 180 || parseFloat(newLocation.longitude) < -180) {
+            setErrors({...errors, longitude:"Longitude must be between -180.0 and 180.0"});
         }
         else {
-            setErrors(errors => ({...errors, "longitude":{"isValid":true, "errorMessage":""}}));
+            setErrors({...errors, longitude:""});
         }
+
+        console.log(errors)
     }
 
     const addLocation = (newLocation) => {
-        setLocationList([...locationList, newLocation])
+        setLocationList({...locationList, [newLocation.name]:{latitude:newLocation.latitude, longitude:newLocation.longitude}})
     }
 
     const deleteLocation = (locationName) => {

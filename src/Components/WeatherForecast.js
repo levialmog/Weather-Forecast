@@ -1,12 +1,19 @@
-import LocationList from "./LocationList";
-
 function WeatherForecast(props) {
     return (
         <div className="card">
-            <div className="card-body">
-                <h3 className="card-title">Locations</h3>
-                <p className="d-none">No locations yet...</p>
-            </div>
+            <img src="" className="card-img-top" alt="WeatherForecast"/>
+                <div className="card-body">
+                    <h5 className="card-title">Jerusalem</h5>
+                    <div className="card-text">
+                        <p>1</p>
+                        <p>1</p>
+                        <p>1</p>
+                        <p>1</p>
+                        <p>1</p>
+                        <p>1</p>
+                        <p>1</p>
+                    </div>
+                </div>
         </div>
     );
 }

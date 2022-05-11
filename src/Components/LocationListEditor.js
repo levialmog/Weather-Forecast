@@ -7,10 +7,12 @@ function LocationListEditor(props) {
             <div className="row">
                 <div className="col-2"/>
                 <div className="col-4">
-                    <LocationForm props={props}/>
+                    <LocationForm validateLocation={props.validateLocation}
+                                  addLocation={props.addLocation}
+                                  errors={props.errors}/>
                 </div>
                 <div className="col-4 text-center">
-                    <LocationList locationList={props.locationList}/>
+                    <LocationList locationList={props.locationList} deleteLocation={props.deleteLocation} isErasable={true}/>
                 </div>
             </div>
         </>

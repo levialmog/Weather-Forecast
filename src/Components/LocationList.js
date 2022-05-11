@@ -1,9 +1,23 @@
 function LocationList(props) {
     const listItems = [];
 
+    const deleteLocation = (name, button) => {
+        props.deleteLocation(name)
+        button.parentElement.remove()
+    }
+
+    const deleteButton = (name) => {
+        if(props.isErasable) {
+            return <button className="deleteButton btn btn-danger" onClick={(event) => deleteLocation(name, event.target)}>Delete</button>
+        }
+    }
+
     props.locationList.forEach((listItem) => {
         listItems.push(
-            <li className="list-group-item">{listItem.name}</li>
+            <li className="list-group-item">
+                {listItem.name}
+                {deleteButton(listItem.name)}
+            </li>
         );
     });
 

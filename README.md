@@ -4,9 +4,11 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Authors
 
-Student name - student email.
+Lee Kol Levi - leele@edu.hac.ac.il\
+Almog Levi - almogle@edu.hac.ac.il
 
 ## General Information
+We ignored the warning "ReactDOM.render is no longer supported in React 18" that exists in the console with the lecturer's approval.
 
 ### libraries used for this project:
 react-router, ...

@@ -3,68 +3,95 @@ import Menu from "./Components/Menu";
 import LocationListEditor from "./Components/LocationListEditor";
 import {useState} from "react";
 import Forecast from "./Components/Forecast";
-//{"name":"Jerusalem", "latitude":"10", "longitude":"12"}
+import NoPage from "./Components/NoPage";
+import {validationErrors} from "./Macros";
+
+/**
+ * The function returns the main page of the app. It contains the list of locations, the list of errors,
+ * and the functions that manage them. The component contains routes which help navigate between the apps pages.
+ * @returns {JSX.Element} The main page of the app.
+ * @constructor
+ */
 function App() {
     const [locationList, setLocationList] = useState({});
-    const [errors, setErrors] = useState({name:"", latitude:"", longitude:""});
+    const [errors, setErrors] = useState({});
 
-    const validateLocation = (newLocation) => {
-        if(!newLocation.name) {
-            setErrors(oldErrors=>({...oldErrors, name:"Name is required"}));
+    /**
+     * The function performs validation on the input which the user has entered in a field of the form.
+     * If it's invalid it puts an appropriate error in the state of the errors.
+     * @param newLocation Holds the values of the form inputs.
+     * @param inputName The specific field that is checked.
+     * @param errorObj Holds the errors.
+     * @param isValidContent Condition for testing on the input.
+     */
+    const validate = (newLocation, inputName, errorObj, isValidContent) => {
+        if(!newLocation[inputName]) {
+            errorObj[inputName] = `${inputName} is required`;
         }
-        else if(newLocation.name in locationList){
-            setErrors(oldErrors => ({...oldErrors, name:"This location is already exist"}));
+        else if(isValidContent){
+            errorObj[inputName] = validationErrors.inputErrors[inputName];
         }
         else{
-            setErrors(oldErrors => ({...oldErrors, name:""}));
+            errorObj[inputName] = "";
         }
-
-        if(!newLocation.latitude) {
-            setErrors({...errors, latitude:"Latitude is required"});
-        }
-        else if(parseFloat(newLocation.latitude) > 90 || parseFloat(newLocation.latitude) < -90) {
-            setErrors({...errors, latitude:"Latitude must be between -90.0 and 90.0"});
-        }
-        else {
-            setErrors({...errors, latitude:""});
-        }
-
-        if(!newLocation.longitude) {
-            setErrors({...errors, longitude:"Longitude is required"});
-        }
-        else if(parseFloat(newLocation.longitude) > 180 || parseFloat(newLocation.longitude) < -180) {
-            setErrors({...errors, longitude:"Longitude must be between -180.0 and 180.0"});
-        }
-        else {
-            setErrors({...errors, longitude:""});
-        }
-
-        console.log(errors)
     }
 
+    /**
+     * The function receives a number, an infimum and a supremum and checks if the number is not in the desired range.
+     * @param inputNumber The number to be checked.
+     * @param infimum The infimum.
+     * @param supremum The supremum.
+     * @returns {boolean} True- if the number is not in the desired range, False- is in the desired range.
+     */
+    const isNotInRange = (inputNumber, infimum, supremum) => {
+        return inputNumber > supremum || inputNumber < infimum
+    }
+
+    /**
+     * The function accepts the new location values that the user entered into the form and performs validation on them
+     * and inserts errors if there is to the errors state.
+     * @param newLocation The new location values that the user entered into the form.
+     */
+    const validateLocation = (newLocation) => {
+        setErrors({});
+        const errorObj = {};
+
+        validate(newLocation, "name", errorObj, newLocation.name in locationList);
+        validate(newLocation, "latitude", errorObj, isNotInRange(parseFloat(newLocation.latitude), -90, 90));
+        validate(newLocation, "longitude", errorObj, isNotInRange(parseFloat(newLocation.longitude), -180, 180));
+
+        setErrors({...errors, ...errorObj})
+    }
+
+    /**
+     * The function adds the new location to the list of locations.
+     * @param newLocation The new location values that the user entered.
+     */
     const addLocation = (newLocation) => {
         setLocationList({...locationList, [newLocation.name]:{latitude:newLocation.latitude, longitude:newLocation.longitude}})
     }
 
+    /**
+     * The function gets a name of a location and deletes it from the location list.
+     * @param locationName The name of the location to be deleted.
+     */
     const deleteLocation = (locationName) => {
-        for (let location of locationList){
-            if(location.name === locationName){
-                locationList.splice(locationList.indexOf(location), 1);
-                break;
-            }
-        }
+        const oldLocationList = Object.assign({}, locationList);
+        delete oldLocationList[locationName];
+        setLocationList(oldLocationList);
     }
 
   return (
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Menu/>}>
-            <Route index element={<Forecast locationList={locationList} deleteLocation={deleteLocation}/>}/>
+          <Route path="/" element={<Menu setErrors={setErrors}/>}>
+            <Route index element={<Forecast locationList={locationList} deleteLocation={deleteLocation}
+                                            setErrors={setErrors} errors={errors}/>}/>
             <Route path="/locationListEditor"
                    element={<LocationListEditor locationList={locationList} validateLocation={validateLocation}
                                                 addLocation={addLocation} deleteLocation={deleteLocation}
                                                 errors={errors}/>}/>
-            {/*<Route path="*" element={<NoPage/>}/>*/}
+            <Route path="*" element={<NoPage/>}/>
           </Route>
         </Routes>
       </BrowserRouter>
